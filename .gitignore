@@ -1,0 +1,48 @@
+# Django Production .gitignore
+
+# Database
+*.db
+*.sqlite3
+db.sqlite3
+/media
+/staticfiles
+
+# Django specific
+*.log
+local_settings.py
+db.sqlite3-journal
+
+# Security
+.env
+.env.local
+.env.production
+secret_key.txt
+
+# Static files (collected)
+/staticfiles/
+
+# Media files
+/media/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+*.sqlite3

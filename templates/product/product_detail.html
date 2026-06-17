@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.title }} — Marketplace{% endblock %}
+
+{% block content %}
+<article class="product-detail">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol class="breadcrumb__list" role="list">
+        <li><a href="{% url 'product_list' %}">Catalog</a></li>
+        <li aria-current="page">{{ product.title }}</li>
+      </ol>
+    </nav>
+
+    <div class="product-detail__layout">
+      <section class="product-gallery" aria-label="Product images">
+        {% with product.images.all as images %}
+          {% if images %}
+          <figure class="product-gallery__main">
+            <img
+              id="gallery-main-image"
+              src="{{ images.0.image.url }}"
+              alt="{{ product.title }} product image"
+              class="product-gallery__main-image"
+            >
+          </figure>
+
+          {% if images|length > 1 %}
+          <ul class="product-gallery__thumbs" role="list" data-gallery-thumbs>
+            {% for image in images %}
+            <li>
+              <button
+                type="button"
+                class="product-gallery__thumb{% if forloop.first %} is-active{% endif %}"
+                data-gallery-thumb
+                data-full-src="{{ image.image.url }}"
+                aria-label="Show image {{ forloop.counter }}"
+                aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+              >
+                <img
+                  src="{{ image.image.url }}"
+                  alt=""
+                  loading="lazy"
+                >
+              </button>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+          {% else %}
+          <div class="product-gallery__empty">
+            <span class="product-gallery__empty-icon" aria-hidden="true">📷</span>
+            <p>No images added for this product yet</p>
+          </div>
+          {% endif %}
+        {% endwith %}
+      </section>
+
+      <section class="product-info" aria-labelledby="product-title">
+        <p class="eyebrow">Product details</p>
+        <h1 id="product-title" class="product-info__title">{{ product.title }}</h1>
+
+        <div class="product-info__meta">
+          <p class="product-info__price">
+            <span class="product-info__price-value">{{ product.price }}</span>
+            <span class="product-info__price-currency">{{ product.get_valute_display }}</span>
+          </p>
+          <span class="status-badge status-badge--{{ product.status|slugify }} status-badge--lg">
+            {{ product.get_status_display }}
+          </span>
+        </div>
+
+        <div class="product-info__description">
+          <h2 class="product-info__subtitle">Description</h2>
+          <div class="product-info__text">
+            {{ product.description|linebreaks }}
+          </div>
+        </div>
+
+        <dl class="product-info__facts">
+          <div class="product-info__fact">
+            <dt>Created</dt>
+            <dd><time datetime="{{ product.created_at|date:'c' }}">{{ product.created_at|date:"d.m.Y" }}</time></dd>
+          </div>
+          <div class="product-info__fact">
+            <dt>Updated</dt>
+            <dd><time datetime="{{ product.updated_at|date:'c' }}">{{ product.updated_at|date:"d.m.Y" }}</time></dd>
+          </div>
+          <div class="product-info__fact">
+            <dt>Images</dt>
+            <dd>{{ product.images.count }}</dd>
+          </div>
+        </dl>
+
+        <div class="product-info__actions">
+          <a href="{% url 'product_list' %}" class="btn btn--ghost">← Back to catalog</a>
+        </div>
+      </section>
+    </div>
+  </div>
+</article>
+{% endblock %}

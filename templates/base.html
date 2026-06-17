@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Marketplace{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container site-header__inner">
+            <a href="{% url 'product_list' %}" class="site-logo">
+                <span class="site-logo__mark" aria-hidden="true">M</span>
+                <span class="site-logo__text">Marketplace</span>
+            </a>
+
+            <nav class="site-nav" aria-label="Main navigation">
+                <a href="{% url 'product_list' %}" class="site-nav__link{% if request.resolver_match.url_name == 'product_list' %} is-active{% endif %}">
+                    Catalog
+                </a>
+                <a href="{% url 'product_create' %}" class="site-nav__link site-nav__link--cta{% if request.resolver_match.url_name == 'product_create' %} is-active{% endif %}">
+                    Add product
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    {% if messages %}
+    <div class="container messages" role="status">
+        {% for message in messages %}
+        <p class="message message--{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="site-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container site-footer__inner">
+            <p class="site-footer__copy">&copy; {% now "Y" %} Marketplace. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'script.js' %}" defer></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
