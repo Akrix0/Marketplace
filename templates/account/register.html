@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Create account — Marketplace{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero--compact">
+  <div class="container page-hero__inner">
+    <div class="page-hero__text">
+      <p class="eyebrow">Account</p>
+      <h1 class="page-title">Create account</h1>
+      <p class="page-lead">Join Marketplace to list and manage your products.</p>
+    </div>
+  </div>
+</section>
+
+<section class="container form-section auth-section">
+  <form method="post" class="product-form auth-form" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="form-alert form-alert--error" role="alert">
+      {% for error in form.non_field_errors %}
+      <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="form-panel">
+      <div class="form-grid">
+        <div class="form-field form-field--full{% if form.username.errors %} has-error{% endif %}">
+          <label for="{{ form.username.id_for_label }}" class="form-label">
+            Username <span class="required" aria-hidden="true">*</span>
+          </label>
+          {{ form.username }}
+          {% if form.username.help_text %}
+          <p class="form-hint">{{ form.username.help_text|safe }}</p>
+          {% endif %}
+          {% for error in form.username.errors %}
+          <p class="form-error" role="alert">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <div class="form-field form-field--full{% if form.password1.errors %} has-error{% endif %}">
+          <label for="{{ form.password1.id_for_label }}" class="form-label">
+            Password <span class="required" aria-hidden="true">*</span>
+          </label>
+          {{ form.password1 }}
+          {% if form.password1.help_text %}
+          <p class="form-hint">{{ form.password1.help_text|safe }}</p>
+          {% endif %}
+          {% for error in form.password1.errors %}
+          <p class="form-error" role="alert">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <div class="form-field form-field--full{% if form.password2.errors %} has-error{% endif %}">
+          <label for="{{ form.password2.id_for_label }}" class="form-label">
+            Confirm password <span class="required" aria-hidden="true">*</span>
+          </label>
+          {{ form.password2 }}
+          {% if form.password2.help_text %}
+          <p class="form-hint">{{ form.password2.help_text|safe }}</p>
+          {% endif %}
+          {% for error in form.password2.errors %}
+          <p class="form-error" role="alert">{{ error }}</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <footer class="form-actions form-actions--split">
+      <p class="auth-form__switch">
+        Already have an account?
+        <a href="{% url 'account:login' %}">Sign in</a>
+      </p>
+      <button type="submit" class="btn btn--primary">Create account</button>
+    </footer>
+  </form>
+</section>
+{% endblock %}

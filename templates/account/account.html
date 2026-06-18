@@ -1,26 +1,56 @@
 {% extends "base.html" %}
 
-{% block title %}Product Catalog — Marketplace{% endblock %}
+{% block title %}My account — Marketplace{% endblock %}
 
 {% block content %}
-<section class="page-hero">
-    <div class="container page-hero__inner">
-        <div class="page-hero__text">
-            <p class="eyebrow">Catalog</p>
-            <h1 class="page-title">Products</h1>
-            <p class="page-lead">Browse available products and view details for each item.</p>
-        </div>
-        <a href="{% url 'product_create' %}" class="btn btn--primary">Add product</a>
+<section class="page-hero page-hero--compact">
+  <div class="container page-hero__inner">
+    <div class="page-hero__text">
+      <p class="eyebrow">Account</p>
+      <h1 class="page-title">My account</h1>
+      <p class="page-lead">Manage your profile and listings.</p>
     </div>
+    <a href="{% url 'product_create' %}" class="btn btn--primary">Add product</a>
+  </div>
 </section>
 
-<section class="container product-section" aria-labelledby="product-grid-heading">
+<section class="container form-section auth-section">
+  <div class="form-panel">
+    <dl class="account-details">
+      <div class="account-details__row">
+        <dt>Username</dt>
+        <dd>{{ user.username }}</dd>
+      </div>
+      <div class="account-details__row">
+        <dt>Email</dt>
+        <dd>{{ user.email|default:"—" }}</dd>
+      </div>
+      <div class="account-details__row">
+        <dt>Role</dt>
+        <dd>{{ user.get_role_display }}</dd>
+      </div>
+      <div class="account-details__row">
+        <dt>Member since</dt>
+        <dd>{{ user.date_joined|date:"F j, Y" }}</dd>
+      </div>
+    </dl>
+  </div>
+
+  <footer class="form-actions">
+    <a href="{% url 'product_list' %}" class="btn btn--ghost">Back to catalog</a>
+    <form method="post" action="{% url 'account:logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn--primary">Sign out</button>
+    </form>
+  </footer>
+</section>
+
+<section class="container product-section account-products" aria-labelledby="my-products-heading">
   <div class="section-heading">
-    <h2 id="product-grid-heading" class="section-title">
+    <h2 id="my-products-heading" class="section-title">
+      My products
       {% if products %}
-        {{ products|length }} product{{ products|length|pluralize }}
-      {% else %}
-        No products
+        <span class="section-title__count">({{ products|length }})</span>
       {% endif %}
     </h2>
   </div>
@@ -75,10 +105,10 @@
     {% endfor %}
   </ul>
   {% else %}
-  <div class="empty-state">
-    <div class="empty-state__icon" aria-hidden="true">🛒</div>
-    <h2 class="empty-state__title">Catalog is empty</h2>
-    <p class="empty-state__text">Add your first product to get started.</p>
+  <div class="empty-state empty-state--compact">
+    <div class="empty-state__icon" aria-hidden="true">📦</div>
+    <h3 class="empty-state__title">No products yet</h3>
+    <p class="empty-state__text">Create your first listing to show it here.</p>
     <a href="{% url 'product_create' %}" class="btn btn--primary">Create product</a>
   </div>
   {% endif %}

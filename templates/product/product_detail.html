@@ -63,7 +63,7 @@
         <div class="product-info__meta">
           <p class="product-info__price">
             <span class="product-info__price-value">{{ product.price }}</span>
-            <span class="product-info__price-currency">{{ product.get_valute_display }}</span>
+            <span class="product-info__price-currency">{{ product.get_currency_display }}</span>
           </p>
           <span class="status-badge status-badge--{{ product.status|slugify }} status-badge--lg">
             {{ product.get_status_display }}
@@ -78,6 +78,10 @@
         </div>
 
         <dl class="product-info__facts">
+          <div class="product-info__fact">
+            <dt>Owner</dt>
+            <dd>{{ product.user.username }}</dd>
+          </div>
           <div class="product-info__fact">
             <dt>Created</dt>
             <dd><time datetime="{{ product.created_at|date:'c' }}">{{ product.created_at|date:"d.m.Y" }}</time></dd>

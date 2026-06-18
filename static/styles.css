@@ -792,8 +792,11 @@ textarea {
 
 .product-form input[type="text"],
 .product-form input[type="number"],
+.product-form input[type="password"],
 .product-form select,
-.product-form textarea {
+.product-form textarea,
+.auth-form input[type="text"],
+.auth-form input[type="password"] {
   width: 100%;
   min-height: 2.75rem;
   padding: 0.65rem 0.85rem;
@@ -813,7 +816,8 @@ textarea {
 
 .product-form input:focus,
 .product-form select:focus,
-.product-form textarea:focus {
+.product-form textarea:focus,
+.auth-form input:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
@@ -848,6 +852,86 @@ textarea {
   justify-content: flex-end;
   gap: 0.75rem;
   padding-top: 0.25rem;
+}
+
+.form-actions--split {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.auth-section {
+  width: min(100% - 2rem, 28rem);
+  margin-inline: auto;
+}
+
+.auth-form__switch {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+}
+
+.auth-form__switch a {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.auth-form__switch a:hover {
+  color: var(--color-primary-hover);
+}
+
+.form-hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+.form-hint ul {
+  margin: 0.25rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.account-details {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+}
+
+.account-details__row {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.account-details__row dt {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.account-details__row dd {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.account-products {
+  margin-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.section-title__count {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.empty-state--compact {
+  padding: 2.5rem 1.5rem;
+}
+
+.empty-state--compact .empty-state__title {
+  font-size: 1.125rem;
 }
 
 /* Upload zone */

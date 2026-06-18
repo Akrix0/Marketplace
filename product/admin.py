@@ -9,13 +9,13 @@ class ImageInline(admin.TabularInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('title', 'price', 'valute', 'status', 'created_at')
-    list_filter = ('status', 'valute', 'created_at')
+    list_display = ('title', 'price', 'currency', 'status', 'created_at')
+    list_filter = ('status', 'currency', 'created_at')
     search_fields = ('title', 'description')
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ('Basic Information', {
-            'fields': ('title', 'price', 'valute')
+            'fields': ('title', 'price', 'currency')
         }),
         ('Details', {
             'fields': ('status', 'description')

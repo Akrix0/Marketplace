@@ -7,7 +7,7 @@ class MultipleFileInput(FileInput):
 class ProductForm(ModelForm):
     class Meta:
         model = Product
-        fields = ['title', "price", "valute", 'status', 'description']
+        fields = ['title', "price", "currency", 'status', 'description']
 
 class ImageForm(ModelForm):
     image = ImageField(widget=MultipleFileInput())

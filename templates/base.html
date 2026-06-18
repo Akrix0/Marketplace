@@ -25,6 +25,18 @@
                 <a href="{% url 'product_create' %}" class="site-nav__link site-nav__link--cta{% if request.resolver_match.url_name == 'product_create' %} is-active{% endif %}">
                     Add product
                 </a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'account:account' %}" class="site-nav__link{% if request.resolver_match.namespace == 'account' and request.resolver_match.url_name == 'account' %} is-active{% endif %}">
+                    Account
+                </a>
+                {% else %}
+                <a href="{% url 'account:login' %}" class="site-nav__link{% if request.resolver_match.namespace == 'account' and request.resolver_match.url_name == 'login' %} is-active{% endif %}">
+                    Sign in
+                </a>
+                <a href="{% url 'account:register' %}" class="site-nav__link site-nav__link--cta{% if request.resolver_match.namespace == 'account' and request.resolver_match.url_name == 'register' %} is-active{% endif %}">
+                    Register
+                </a>
+                {% endif %}
             </nav>
         </div>
     </header>

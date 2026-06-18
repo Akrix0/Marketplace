@@ -53,10 +53,10 @@
             {% endfor %}
           </div>
 
-          <div class="form-field{% if product_form.valute.errors %} has-error{% endif %}">
-            <label for="{{ product_form.valute.id_for_label }}" class="form-label">Currency</label>
-            {{ product_form.valute }}
-            {% for error in product_form.valute.errors %}
+          <div class="form-field{% if product_form.currency.errors %} has-error{% endif %}">
+            <label for="{{ product_form.currency.id_for_label }}" class="form-label">Currency</label>
+            {{ product_form.currency }}
+            {% for error in product_form.currency.errors %}
             <p class="form-error" role="alert">{{ error }}</p>
             {% endfor %}
           </div>
