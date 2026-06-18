@@ -127,4 +127,4 @@ MEDIA_ROOT = BASE_DIR / 'media'
 AUTH_USER_MODEL = 'account.Account'
 
 LOGIN_URL = 'account:login'
-LOGIN_REDIRECT_URL = 'account:account'
+LOGIN_REDIRECT_URL = 'account:account_me'

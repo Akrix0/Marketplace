@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Edit profile — Marketplace{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero--compact">
+  <div class="container page-hero__inner">
+    <div class="page-hero__text">
+      <p class="eyebrow">Settings</p>
+      <h1 class="page-title">Edit profile</h1>
+      <p class="page-lead">Update your account information. Changing your username updates your profile URL.</p>
+    </div>
+  </div>
+</section>
+
+<section class="container form-section auth-section">
+  <form method="post" class="product-form auth-form" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="form-alert form-alert--error" role="alert">
+      {% for error in form.non_field_errors %}
+      <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="form-panel">
+      <header class="form-panel__header">
+        <h2 class="form-panel__title">Account information</h2>
+        <p class="form-panel__hint">Your username is visible to other users on product listings.</p>
+      </header>
+
+      <div class="form-grid">
+        <div class="form-field form-field--full{% if form.username.errors %} has-error{% endif %}">
+          <label for="{{ form.username.id_for_label }}" class="form-label">
+            Username <span class="required" aria-hidden="true">*</span>
+          </label>
+          {{ form.username }}
+          {% for error in form.username.errors %}
+          <p class="form-error" role="alert">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <div class="form-field form-field--full{% if form.email.errors %} has-error{% endif %}">
+          <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+          {{ form.email }}
+          {% for error in form.email.errors %}
+          <p class="form-error" role="alert">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <div class="form-field{% if form.first_name.errors %} has-error{% endif %}">
+          <label for="{{ form.first_name.id_for_label }}" class="form-label">First name</label>
+          {{ form.first_name }}
+          {% for error in form.first_name.errors %}
+          <p class="form-error" role="alert">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <div class="form-field{% if form.last_name.errors %} has-error{% endif %}">
+          <label for="{{ form.last_name.id_for_label }}" class="form-label">Last name</label>
+          {{ form.last_name }}
+          {% for error in form.last_name.errors %}
+          <p class="form-error" role="alert">{{ error }}</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <footer class="form-actions">
+      <a href="{{ account.get_absolute_url }}" class="btn btn--ghost">Cancel</a>
+      <button type="submit" class="btn btn--primary">Save changes</button>
+    </footer>
+  </form>
+</section>
+{% endblock %}

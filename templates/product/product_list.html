@@ -17,66 +17,41 @@
 <section class="container product-section" aria-labelledby="product-grid-heading">
   <div class="section-heading">
     <h2 id="product-grid-heading" class="section-title">
-      {% if products %}
-        {{ products|length }} product{{ products|length|pluralize }}
+      {% if product_count %}
+        {{ product_count }} product{{ product_count|pluralize }}
       {% else %}
         No products
       {% endif %}
     </h2>
   </div>
 
-  {% if products %}
-  <ul class="product-grid" role="list">
-    {% for product in products %}
-    <li>
-      <article class="product-card">
-        <a href="{% url 'product_detail' product.pk %}" class="product-card__media" tabindex="-1" aria-hidden="true">
-          {% with product.images.first as cover %}
-            {% if cover %}
-            <img
-              src="{{ cover.image.url }}"
-              alt=""
-              class="product-card__image"
-              loading="lazy"
-            >
-            {% else %}
-            <div class="product-card__placeholder">
-              <span aria-hidden="true">📦</span>
-              <span class="visually-hidden">No image</span>
-            </div>
-            {% endif %}
-          {% endwith %}
-          <span class="status-badge status-badge--{{ product.status|slugify }}">
-            {{ product.get_status_display }}
-          </span>
-        </a>
-
-        <div class="product-card__body">
-          <h3 class="product-card__title">
-            <a href="{% url 'product_detail' product.pk %}">{{ product.title }}</a>
-          </h3>
-
-          <p class="product-card__price">
-            {{ product.price }}
-            <span class="product-card__currency">{{ product.get_currency_display }}</span>
-          </p>
-
-          <p class="product-card__excerpt">
-            {{ product.description|truncatechars:90 }}
-          </p>
-
-          <a href="{% url 'product_detail' product.pk %}" class="product-card__link">
-            View details
-            <span class="product-card__arrow" aria-hidden="true">→</span>
-          </a>
-        </div>
-      </article>
-    </li>
+  {% if product_page %}
+  <ul class="product-grid" role="list" data-infinite-grid>
+    {% for product in product_page %}
+      {% include "product/_product_card.html" with product=product show_owner_actions=False only %}
     {% endfor %}
   </ul>
+
+  {% if product_page.has_next %}
+  <div class="infinite-scroll" data-infinite-scroll>
+    <a
+      href="?page={{ product_page.next_page_number }}"
+      class="infinite-scroll__fallback"
+      data-infinite-next
+      hidden
+      aria-hidden="true"
+      tabindex="-1"
+    >
+      Load more
+    </a>
+    <p class="infinite-scroll__status" data-infinite-status aria-live="polite"></p>
+  </div>
+  {% endif %}
+
+  {% include "_pagination.html" with page_obj=product_page page_range=product_page_range page_param="page" label="Catalog pagination" query_suffix="" only %}
   {% else %}
   <div class="empty-state">
-    <div class="empty-state__icon" aria-hidden="true">🛒</div>
+    <div class="empty-state__icon" aria-hidden="true">Catalog</div>
     <h2 class="empty-state__title">Catalog is empty</h2>
     <p class="empty-state__text">Add your first product to get started.</p>
     <a href="{% url 'product_create' %}" class="btn btn--primary">Create product</a>

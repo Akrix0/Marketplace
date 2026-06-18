@@ -1,115 +1,139 @@
 {% extends "base.html" %}
 
-{% block title %}My account — Marketplace{% endblock %}
+{% block title %}{% if is_owner %}My account{% else %}{{ account.username }}{% endif %} — Marketplace{% endblock %}
 
 {% block content %}
 <section class="page-hero page-hero--compact">
   <div class="container page-hero__inner">
     <div class="page-hero__text">
-      <p class="eyebrow">Account</p>
-      <h1 class="page-title">My account</h1>
-      <p class="page-lead">Manage your profile and listings.</p>
+      <p class="eyebrow">{% if is_owner %}Your profile{% else %}Seller{% endif %}</p>
+      <h1 class="page-title">{% if is_owner %}My account{% else %}{{ account.username }}{% endif %}</h1>
+      <p class="page-lead">
+        {% if is_owner %}
+          View your profile details and manage your listings.
+        {% else %}
+          Browse products listed by this seller.
+        {% endif %}
+      </p>
     </div>
-    <a href="{% url 'product_create' %}" class="btn btn--primary">Add product</a>
+    {% if is_owner %}
+    <div class="page-hero__actions">
+      <a href="{% url 'account:account_edit' account.slug %}" class="btn btn--ghost">Edit profile</a>
+      <a href="{% url 'product_create' %}" class="btn btn--primary">Add product</a>
+    </div>
+    {% endif %}
   </div>
 </section>
 
-<section class="container form-section auth-section">
-  <div class="form-panel">
-    <dl class="account-details">
-      <div class="account-details__row">
-        <dt>Username</dt>
-        <dd>{{ user.username }}</dd>
+<section class="container account-page">
+  <div class="account-profile">
+    <div class="account-profile__card">
+      <div class="account-profile__header">
+        <div class="account-avatar" aria-hidden="true">
+          {{ account.username|make_list|first|upper }}
+        </div>
+        <div class="account-profile__identity">
+          <h2 class="account-profile__name">
+            {% if account.first_name or account.last_name %}
+              {{ account.first_name }} {{ account.last_name }}
+            {% else %}
+              {{ account.username }}
+            {% endif %}
+          </h2>
+          <p class="account-profile__username">@{{ account.username }}</p>
+          {% if account.email and is_owner %}
+          <p class="account-profile__email">{{ account.email }}</p>
+          {% endif %}
+        </div>
       </div>
-      <div class="account-details__row">
-        <dt>Email</dt>
-        <dd>{{ user.email|default:"—" }}</dd>
-      </div>
-      <div class="account-details__row">
-        <dt>Role</dt>
-        <dd>{{ user.get_role_display }}</dd>
-      </div>
-      <div class="account-details__row">
-        <dt>Member since</dt>
-        <dd>{{ user.date_joined|date:"F j, Y" }}</dd>
-      </div>
-    </dl>
-  </div>
 
-  <footer class="form-actions">
-    <a href="{% url 'product_list' %}" class="btn btn--ghost">Back to catalog</a>
-    <form method="post" action="{% url 'account:logout' %}">
-      {% csrf_token %}
-      <button type="submit" class="btn btn--primary">Sign out</button>
-    </form>
-  </footer>
+      <dl class="account-stats">
+        <div class="account-stats__item">
+          <dt>Products</dt>
+          <dd>{{ product_count }}</dd>
+        </div>
+        <div class="account-stats__item">
+          <dt>Role</dt>
+          <dd>{{ account.get_role_display }}</dd>
+        </div>
+        <div class="account-stats__item">
+          <dt>Member since</dt>
+          <dd><time datetime="{{ account.date_joined|date:'c' }}">{{ account.date_joined|date:"M j, Y" }}</time></dd>
+        </div>
+      </dl>
+    </div>
+
+    <aside class="account-profile__details">
+      <header class="form-panel__header">
+        <h2 class="form-panel__title">Profile details</h2>
+        <p class="form-panel__hint">Public information shown on your seller page.</p>
+      </header>
+
+      <dl class="account-details">
+        <div class="account-details__row">
+          <dt>Username</dt>
+          <dd>{{ account.username }}</dd>
+        </div>
+        {% if is_owner %}
+        <div class="account-details__row">
+          <dt>Email</dt>
+          <dd>{{ account.email|default:"Not set" }}</dd>
+        </div>
+        {% endif %}
+        <div class="account-details__row">
+          <dt>First name</dt>
+          <dd>{{ account.first_name|default:"—" }}</dd>
+        </div>
+        <div class="account-details__row">
+          <dt>Last name</dt>
+          <dd>{{ account.last_name|default:"—" }}</dd>
+        </div>
+        <div class="account-details__row">
+          <dt>Profile URL</dt>
+          <dd class="account-details__url">{{ request.scheme }}://{{ request.get_host }}{{ account.get_absolute_url }}</dd>
+        </div>
+      </dl>
+
+      {% if is_owner %}
+      <footer class="account-profile__footer">
+        <a href="{% url 'account:account_edit' account.slug %}" class="btn btn--primary">Edit profile</a>
+      </footer>
+      {% endif %}
+    </aside>
+  </div>
 </section>
 
-<section class="container product-section account-products" aria-labelledby="my-products-heading">
+<section class="container product-section account-products" aria-labelledby="account-products-heading">
   <div class="section-heading">
-    <h2 id="my-products-heading" class="section-title">
-      My products
-      {% if products %}
-        <span class="section-title__count">({{ products|length }})</span>
+    <h2 id="account-products-heading" class="section-title">
+      {% if is_owner %}My products{% else %}{{ account.username }}'s products{% endif %}
+      {% if product_count %}
+        <span class="section-title__count">({{ product_count }})</span>
       {% endif %}
     </h2>
+    {% if is_owner %}
+    <a href="{% url 'product_create' %}" class="btn btn--ghost btn--sm">New listing</a>
+    {% endif %}
   </div>
 
-  {% if products %}
+  {% if product_page %}
   <ul class="product-grid" role="list">
-    {% for product in products %}
-    <li>
-      <article class="product-card">
-        <a href="{% url 'product_detail' product.pk %}" class="product-card__media" tabindex="-1" aria-hidden="true">
-          {% with product.images.first as cover %}
-            {% if cover %}
-            <img
-              src="{{ cover.image.url }}"
-              alt=""
-              class="product-card__image"
-              loading="lazy"
-            >
-            {% else %}
-            <div class="product-card__placeholder">
-              <span aria-hidden="true">📦</span>
-              <span class="visually-hidden">No image</span>
-            </div>
-            {% endif %}
-          {% endwith %}
-          <span class="status-badge status-badge--{{ product.status|slugify }}">
-            {{ product.get_status_display }}
-          </span>
-        </a>
-
-        <div class="product-card__body">
-          <h3 class="product-card__title">
-            <a href="{% url 'product_detail' product.pk %}">{{ product.title }}</a>
-          </h3>
-
-          <p class="product-card__price">
-            {{ product.price }}
-            <span class="product-card__currency">{{ product.get_currency_display }}</span>
-          </p>
-
-          <p class="product-card__excerpt">
-            {{ product.description|truncatechars:90 }}
-          </p>
-
-          <a href="{% url 'product_detail' product.pk %}" class="product-card__link">
-            View details
-            <span class="product-card__arrow" aria-hidden="true">→</span>
-          </a>
-        </div>
-      </article>
-    </li>
+    {% for product in product_page %}
+      {% include "product/_product_card.html" with product=product show_owner_actions=is_owner only %}
     {% endfor %}
   </ul>
+
+  {% include "_pagination.html" with page_obj=product_page page_range=product_page_range page_param="products_page" label="Profile products pagination" query_suffix="" only %}
   {% else %}
   <div class="empty-state empty-state--compact">
-    <div class="empty-state__icon" aria-hidden="true">📦</div>
+    <div class="empty-state__icon" aria-hidden="true">Products</div>
     <h3 class="empty-state__title">No products yet</h3>
-    <p class="empty-state__text">Create your first listing to show it here.</p>
+    <p class="empty-state__text">
+      {% if is_owner %}Create your first listing to show it here.{% else %}This seller has not listed any products yet.{% endif %}
+    </p>
+    {% if is_owner %}
     <a href="{% url 'product_create' %}" class="btn btn--primary">Create product</a>
+    {% endif %}
   </div>
   {% endif %}
 </section>

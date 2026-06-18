@@ -112,8 +112,91 @@
     });
   }
 
+  function initInfiniteScroll() {
+    var grid = document.querySelector("[data-infinite-grid]");
+    var wrapper = document.querySelector("[data-infinite-scroll]");
+    var nextLink = document.querySelector("[data-infinite-next]");
+    var status = document.querySelector("[data-infinite-status]");
+
+    if (!grid || !wrapper || !nextLink || !("IntersectionObserver" in window) || !("fetch" in window)) {
+      return;
+    }
+
+    var isLoading = false;
+    nextLink.hidden = true;
+
+    function setStatus(message) {
+      if (status) {
+        status.textContent = message;
+      }
+    }
+
+    function loadNextPage() {
+      var nextUrl = nextLink.getAttribute("href");
+
+      if (isLoading || !nextUrl) {
+        return;
+      }
+
+      isLoading = true;
+      setStatus("Loading more products...");
+
+      fetch(nextUrl, {
+        headers: {
+          "X-Requested-With": "XMLHttpRequest"
+        }
+      })
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error("Unable to load products");
+          }
+
+          return response.text();
+        })
+        .then(function (html) {
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(html, "text/html");
+          var nextGrid = doc.querySelector("[data-infinite-grid]");
+          var nextPageLink = doc.querySelector("[data-infinite-next]");
+
+          if (!nextGrid) {
+            wrapper.remove();
+            return;
+          }
+
+          Array.from(nextGrid.children).forEach(function (item) {
+            grid.appendChild(item);
+          });
+
+          if (nextPageLink) {
+            nextLink.setAttribute("href", nextPageLink.getAttribute("href"));
+            setStatus("");
+          } else {
+            wrapper.remove();
+          }
+        })
+        .catch(function () {
+          setStatus("Could not load more products.");
+        })
+        .finally(function () {
+          isLoading = false;
+        });
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+      if (entries.some(function (entry) { return entry.isIntersecting; })) {
+        loadNextPage();
+      }
+    }, {
+      rootMargin: "240px 0px"
+    });
+
+    observer.observe(wrapper);
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initGallery();
     initImageUpload();
+    initInfiniteScroll();
   });
 })();

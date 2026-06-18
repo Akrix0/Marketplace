@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Edit {{ product.title }} — Marketplace{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero--compact">
+  <div class="container page-hero__inner">
+    <div class="page-hero__text">
+      <p class="eyebrow">Edit</p>
+      <h1 class="page-title">Update product</h1>
+      <p class="page-lead">Change details or add more images to <strong>{{ product.title }}</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="container form-section">
+  <form method="post" enctype="multipart/form-data" class="product-form" novalidate>
+    {% csrf_token %}
+
+    {% if product_form.non_field_errors %}
+    <div class="form-alert form-alert--error" role="alert">
+      {% for error in product_form.non_field_errors %}
+      <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="form-layout">
+      <div class="form-panel">
+        <header class="form-panel__header">
+          <h2 class="form-panel__title">Basic information</h2>
+          <p class="form-panel__hint">Title, price, and status appear in the catalog.</p>
+        </header>
+
+        <div class="form-grid">
+          <div class="form-field form-field--full{% if product_form.title.errors %} has-error{% endif %}">
+            <label for="{{ product_form.title.id_for_label }}" class="form-label">
+              Product title <span class="required" aria-hidden="true">*</span>
+            </label>
+            {{ product_form.title }}
+            {% for error in product_form.title.errors %}
+            <p class="form-error" role="alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          <div class="form-field{% if product_form.price.errors %} has-error{% endif %}">
+            <label for="{{ product_form.price.id_for_label }}" class="form-label">
+              Price <span class="required" aria-hidden="true">*</span>
+            </label>
+            {{ product_form.price }}
+            {% for error in product_form.price.errors %}
+            <p class="form-error" role="alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          <div class="form-field{% if product_form.currency.errors %} has-error{% endif %}">
+            <label for="{{ product_form.currency.id_for_label }}" class="form-label">Currency</label>
+            {{ product_form.currency }}
+            {% for error in product_form.currency.errors %}
+            <p class="form-error" role="alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          <div class="form-field form-field--full{% if product_form.status.errors %} has-error{% endif %}">
+            <label for="{{ product_form.status.id_for_label }}" class="form-label">Availability status</label>
+            {{ product_form.status }}
+            {% for error in product_form.status.errors %}
+            <p class="form-error" role="alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          <div class="form-field form-field--full{% if product_form.description.errors %} has-error{% endif %}">
+            <label for="{{ product_form.description.id_for_label }}" class="form-label">Description</label>
+            {{ product_form.description }}
+            {% for error in product_form.description.errors %}
+            <p class="form-error" role="alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <aside class="form-panel">
+        <header class="form-panel__header">
+          <h2 class="form-panel__title">Images</h2>
+          <p class="form-panel__hint">Upload additional images. Existing images are kept.</p>
+        </header>
+
+        {% with product.images.all as images %}
+        {% if images %}
+        <ul class="upload-preview" role="list">
+          {% for image in images %}
+          <li class="upload-preview__item">
+            <img src="{{ image.image.url }}" alt="" loading="lazy" class="upload-preview__thumb">
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        <div class="upload-zone" data-upload-zone>
+          <input
+            type="file"
+            name="image"
+            id="product-images"
+            class="upload-zone__input"
+            accept="image/*"
+            multiple
+            data-image-input
+          >
+          <label for="product-images" class="upload-zone__label">
+            <span class="upload-zone__icon" aria-hidden="true">↑</span>
+            <span class="upload-zone__title">Drag files here</span>
+            <span class="upload-zone__text">or click to choose images</span>
+            <span class="upload-zone__formats">PNG, JPG, WEBP</span>
+          </label>
+        </div>
+
+        <ul class="upload-preview" data-upload-preview role="list" hidden></ul>
+      </aside>
+    </div>
+
+    <footer class="form-actions">
+      <a href="{{ product.get_absolute_url }}" class="btn btn--ghost">Cancel</a>
+      <button type="submit" class="btn btn--primary">Save changes</button>
+    </footer>
+  </form>
+</section>
+{% endblock %}

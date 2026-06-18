@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Delete {{ product.title }} — Marketplace{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero--compact">
+  <div class="container page-hero__inner">
+    <div class="page-hero__text">
+      <p class="eyebrow">Delete</p>
+      <h1 class="page-title">Remove product</h1>
+      <p class="page-lead">This action cannot be undone.</p>
+    </div>
+  </div>
+</section>
+
+<section class="container form-section">
+  <div class="form-panel">
+    <p>Are you sure you want to delete <strong>{{ product.title }}</strong>?</p>
+    <p>All images and listing data for this product will be permanently removed.</p>
+
+    <footer class="form-actions">
+      <a href="{{ product.get_absolute_url }}" class="btn btn--ghost">Cancel</a>
+      <form method="post" class="inline-form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn--danger">Delete product</button>
+      </form>
+    </footer>
+  </div>
+</section>
+{% endblock %}
