@@ -46,3 +46,5 @@ htmlcov/
 .coverage.*
 
 *.sqlite3
+
+management/

@@ -1,9 +1,9 @@
-from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import View
+from django.core.paginator import Paginator
 
-from account.mixins import LoginRequiredMixin
 from Marketplace.pagination import get_compact_page_range
+from account.mixins import LoginRequiredMixin
 
 from .forms import ProductForm
 from .mixins import ProductOwnerRequiredMixin
@@ -22,20 +22,18 @@ class ProductListView(View):
         })
 
 
+
 class ProductDetailView(View):
     def get(self, request, pk):
         product = get_object_or_404(
             Product.objects.select_related('user').prefetch_related('images'),
             pk=pk,
         )
-        images = product.images.all()
-        image_paginator = Paginator(images, 6)
-        image_page = image_paginator.get_page(request.GET.get('photos_page'))
+        images = list(product.images.all())
         return render(request, 'product/product_detail.html', {
             'product': product,
-            'image_page': image_page,
-            'image_page_range': get_compact_page_range(image_page),
-            'image_count': image_paginator.count,
+            'images': images,
+            'image_count': len(images),
             'is_owner': request.user.is_authenticated and request.user.pk == product.user_id,
         })
 
@@ -54,7 +52,7 @@ class ProductCreateView(LoginRequiredMixin, View):
             product.user = request.user
             product.save()
 
-            for image in request.FILES.getlist('image'):
+            for image in request.FILES.getlist('image')[:Product.MAX_IMAGES]:
                 Image.objects.create(
                     product=product,
                     image=image,
@@ -80,7 +78,7 @@ class ProductUpdateView(ProductOwnerRequiredMixin, View):
         if product_form.is_valid():
             product = product_form.save()
 
-            for image in request.FILES.getlist('image'):
+            for image in request.FILES.getlist('image')[:product.remaining_image_slots()]:
                 Image.objects.create(
                     product=product,
                     image=image,

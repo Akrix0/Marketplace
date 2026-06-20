@@ -1,7 +1,7 @@
 ELLIPSIS = "..."
 
 
-def get_compact_page_range(page_obj, on_start=3, before=2, after=3, on_end=3):
+def get_compact_page_range(page_obj, on_start=3, before=2, after=2, on_end=3):
     page_count = page_obj.paginator.num_pages
     current_page = page_obj.number
 

@@ -14,11 +14,11 @@
 
     <div class="product-detail__layout">
       <section class="product-gallery" aria-label="Product images">
-          {% if image_page %}
+          {% if images %}
           <figure class="product-gallery__main">
             <img
               id="gallery-main-image"
-              src="{{ image_page.0.image.url }}"
+              src="{{ images.0.image.url }}"
               alt="{{ product.title }} product image"
               class="product-gallery__main-image"
             >
@@ -26,7 +26,7 @@
 
           {% if image_count > 1 %}
           <ul class="product-gallery__thumbs" role="list" data-gallery-thumbs>
-            {% for image in image_page %}
+            {% for image in images %}
             <li>
               <button
                 type="button"
@@ -45,8 +45,6 @@
             </li>
             {% endfor %}
           </ul>
-
-          {% include "_pagination.html" with page_obj=image_page page_range=image_page_range page_param="photos_page" label="Product photos pagination" query_suffix="" only %}
           {% endif %}
           {% else %}
           <div class="product-gallery__empty">
