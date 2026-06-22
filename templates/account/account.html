@@ -18,8 +18,12 @@
     </div>
     {% if is_owner %}
     <div class="page-hero__actions">
-      <a href="{% url 'account:account_edit' account.slug %}" class="btn btn--ghost">Edit profile</a>
-      <a href="{% url 'product_create' %}" class="btn btn--primary">Add product</a>
+      <a href="{% url 'account:account_edit' account.slug %}" class="btn btn--icon btn--ghost" aria-label="Edit profile" title="Edit profile">
+        {% include "partials/icon.html" with name="edit" %}
+      </a>
+      <a href="{% url 'product_create' %}" class="btn btn--icon btn--primary" aria-label="Add product" title="Add product">
+        {% include "partials/icon.html" with name="plus" %}
+      </a>
     </div>
     {% endif %}
   </div>

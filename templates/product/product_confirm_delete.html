@@ -19,10 +19,14 @@
     <p>All images and listing data for this product will be permanently removed.</p>
 
     <footer class="form-actions">
-      <a href="{{ product.get_absolute_url }}" class="btn btn--ghost">Cancel</a>
+      <a href="{{ product.get_absolute_url }}" class="btn btn--icon btn--ghost" aria-label="Cancel" title="Cancel">
+        {% include "partials/icon.html" with name="arrow-left" %}
+      </a>
       <form method="post" class="inline-form">
         {% csrf_token %}
-        <button type="submit" class="btn btn--danger">Delete product</button>
+        <button type="submit" class="btn btn--icon btn--danger" aria-label="Delete product" title="Delete product">
+          {% include "partials/icon.html" with name="trash" %}
+        </button>
       </form>
     </footer>
   </div>

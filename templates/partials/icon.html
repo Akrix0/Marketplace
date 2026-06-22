@@ -1,0 +1,27 @@
+{% if name == 'cart' %}
+<i class="icon bi bi-cart{% if class %} {{ class }}{% endif %}" style="font-size: {{ size|default:20 }}px;" aria-hidden="true"></i>
+{% elif name == 'cart-plus' %}
+<i class="icon bi bi-cart-plus{% if class %} {{ class }}{% endif %}" style="font-size: {{ size|default:20 }}px;" aria-hidden="true"></i>
+{% elif name == 'grid' %}
+<i class="icon bi bi-grid{% if class %} {{ class }}{% endif %}" style="font-size: {{ size|default:20 }}px;" aria-hidden="true"></i>
+{% elif name == 'plus' %}
+<i class="icon bi bi-plus-lg{% if class %} {{ class }}{% endif %}" style="font-size: {{ size|default:20 }}px;" aria-hidden="true"></i>
+{% elif name == 'user' %}
+<i class="icon bi bi-person{% if class %} {{ class }}{% endif %}" style="font-size: {{ size|default:20 }}px;" aria-hidden="true"></i>
+{% elif name == 'user-plus' %}
+<i class="icon bi bi-person-plus{% if class %} {{ class }}{% endif %}" style="font-size: {{ size|default:20 }}px;" aria-hidden="true"></i>
+{% elif name == 'log-in' %}
+<i class="icon bi bi-box-arrow-in-right{% if class %} {{ class }}{% endif %}" style="font-size: {{ size|default:20 }}px;" aria-hidden="true"></i>
+{% elif name == 'log-out' %}
+<i class="icon bi bi-box-arrow-right{% if class %} {{ class }}{% endif %}" style="font-size: {{ size|default:20 }}px;" aria-hidden="true"></i>
+{% elif name == 'edit' %}
+<i class="icon bi bi-pencil{% if class %} {{ class }}{% endif %}" style="font-size: {{ size|default:20 }}px;" aria-hidden="true"></i>
+{% elif name == 'trash' %}
+<i class="icon bi bi-trash{% if class %} {{ class }}{% endif %}" style="font-size: {{ size|default:20 }}px;" aria-hidden="true"></i>
+{% elif name == 'arrow-left' %}
+<i class="icon bi bi-arrow-left{% if class %} {{ class }}{% endif %}" style="font-size: {{ size|default:20 }}px;" aria-hidden="true"></i>
+{% elif name == 'minus' %}
+<i class="icon bi bi-dash-lg{% if class %} {{ class }}{% endif %}" style="font-size: {{ size|default:20 }}px;" aria-hidden="true"></i>
+{% elif name == 'check' %}
+<i class="icon bi bi-check-lg{% if class %} {{ class }}{% endif %}" style="font-size: {{ size|default:20 }}px;" aria-hidden="true"></i>
+{% endif %}

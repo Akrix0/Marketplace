@@ -108,8 +108,12 @@
     </div>
 
     <footer class="form-actions">
-      <a href="{% url 'product_list' %}" class="btn btn--ghost">Cancel</a>
-      <button type="submit" class="btn btn--primary">Save product</button>
+      <a href="{% url 'product_list' %}" class="btn btn--icon btn--ghost" aria-label="Cancel" title="Cancel">
+        {% include "partials/icon.html" with name="arrow-left" %}
+      </a>
+      <button type="submit" class="btn btn--icon btn--primary" aria-label="Save product" title="Save product">
+        {% include "partials/icon.html" with name="check" %}
+      </button>
     </footer>
   </form>
 </section>

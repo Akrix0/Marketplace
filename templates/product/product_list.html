@@ -10,7 +10,9 @@
             <h1 class="page-title">Products</h1>
             <p class="page-lead">Browse available products and view details for each item.</p>
         </div>
-        <a href="{% url 'product_create' %}" class="btn btn--primary">Add product</a>
+        <a href="{% url 'product_create' %}" class="btn btn--icon btn--primary" aria-label="Add product" title="Add product">
+            {% include "partials/icon.html" with name="plus" %}
+        </a>
     </div>
 </section>
 

@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping cart — Marketplace{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero--compact">
+  <div class="container page-hero__inner">
+    <div class="page-hero__text">
+      <p class="eyebrow">Cart</p>
+      <h1 class="page-title">Your cart</h1>
+      <p class="page-lead" data-cart-summary>
+        {% if items %}
+          {{ items|length }} item{{ items|length|pluralize }} ready for checkout.
+        {% else %}
+          Your cart is empty. Browse the catalog to add products.
+        {% endif %}
+      </p>
+    </div>
+    <a href="{% url 'product_list' %}" class="btn btn--icon btn--ghost" aria-label="Back to catalog" title="Back to catalog">
+      {% include "partials/icon.html" with name="arrow-left" %}
+    </a>
+  </div>
+</section>
+
+<section class="container cart-section" aria-labelledby="cart-heading">
+  <h2 id="cart-heading" class="visually-hidden">Cart items</h2>
+
+  {% if items %}
+  <ul class="cart-list" role="list" data-cart-list>
+    {% for item in items %}
+    <li
+      class="cart-item"
+      data-cart-item-row
+      data-item-id="{{ item.pk }}"
+      data-unit-price="{{ item.product.price }}"
+    >
+      <a href="{% url 'product_detail' item.product.pk %}" class="cart-item__media" tabindex="-1" aria-hidden="true">
+        {% with item.product.images.first as cover %}
+          {% if cover %}
+          <img
+            src="{{ cover.image.url }}"
+            alt=""
+            class="cart-item__image"
+            loading="lazy"
+          >
+          {% else %}
+          <div class="cart-item__placeholder">No image</div>
+          {% endif %}
+        {% endwith %}
+      </a>
+
+      <div class="cart-item__body">
+        <h3 class="cart-item__title">
+          <a href="{% url 'product_detail' item.product.pk %}">{{ item.product.title }}</a>
+        </h3>
+        <p class="cart-item__price">
+          {{ item.product.price }}
+          <span class="cart-item__currency">{{ item.product.get_currency_display }}</span>
+        </p>
+
+        <div class="qty-stepper" data-qty-stepper>
+          <form
+            method="post"
+            action="{% url 'cart_item_update' cart.pk item.pk %}"
+            class="qty-stepper__form"
+            data-qty-form
+            data-qty-action="decrease"
+          >
+            {% csrf_token %}
+            <input type="hidden" name="quantity" value="{{ item.quantity|add:'-1' }}">
+            <button
+              type="submit"
+              class="qty-stepper__btn"
+              aria-label="Decrease quantity"
+              {% if item.quantity <= 1 %}disabled{% endif %}
+            >
+              {% include "partials/icon.html" with name="minus" size=16 %}
+            </button>
+          </form>
+
+          <form
+            method="post"
+            action="{% url 'cart_item_update' cart.pk item.pk %}"
+            class="qty-stepper__form qty-stepper__form--input"
+            data-qty-form
+            data-qty-action="set"
+            data-qty-input-form
+          >
+            {% csrf_token %}
+            <input
+              type="number"
+              name="quantity"
+              class="qty-stepper__input"
+              min="1"
+              max="99"
+              value="{{ item.quantity }}"
+              aria-label="Quantity for {{ item.product.title }}"
+            >
+          </form>
+
+          <form
+            method="post"
+            action="{% url 'cart_item_update' cart.pk item.pk %}"
+            class="qty-stepper__form"
+            data-qty-form
+            data-qty-action="increase"
+          >
+            {% csrf_token %}
+            <input type="hidden" name="quantity" value="{{ item.quantity|add:'1' }}">
+            <button type="submit" class="qty-stepper__btn" aria-label="Increase quantity">
+              {% include "partials/icon.html" with name="plus" size=16 %}
+            </button>
+          </form>
+
+          <form
+            method="post"
+            action="{% url 'cart_item_update' cart.pk item.pk %}"
+            class="qty-stepper__form"
+            data-qty-form
+            data-qty-action="remove"
+          >
+            {% csrf_token %}
+            <input type="hidden" name="quantity" value="0">
+            <button
+              type="submit"
+              class="qty-stepper__btn qty-stepper__btn--danger"
+              aria-label="Remove from cart"
+              title="Remove"
+            >
+              {% include "partials/icon.html" with name="trash" size=16 %}
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="cart-item__subtotal">
+        <span class="cart-item__subtotal-label">Subtotal</span>
+        <span class="cart-item__subtotal-value" data-item-subtotal>
+          {% widthratio item.product.price 1 item.quantity %}
+          <span class="cart-item__currency">{{ item.product.get_currency_display }}</span>
+        </span>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <div class="empty-state" data-cart-empty>
+    <div class="empty-state__icon" aria-hidden="true">
+      {% include "partials/icon.html" with name="cart" size=40 %}
+    </div>
+    <h2 class="empty-state__title">Cart is empty</h2>
+    <p class="empty-state__text">Find something you like in the catalog and add it here.</p>
+    <a href="{% url 'product_list' %}" class="btn btn--icon btn--primary" aria-label="Browse catalog" title="Browse catalog">
+      {% include "partials/icon.html" with name="grid" %}
+    </a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
