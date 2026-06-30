@@ -1,12 +1,16 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import View
+from django.views.generic import ListView, View
 from django.core.paginator import Paginator
+from django_filters.views import FilterView
+from django.db.models import Q
+from django_filters.views import FilterView
 
 from Marketplace.pagination import get_compact_page_range
 from account.mixins import LoginRequiredMixin
 
 from .forms import ProductForm
+from .filters import ProductFilter
 from .mixins import CartOwnerRequiredMixin, ProductOwnerRequiredMixin
 from .models import Image, Product, Cart, CartItem
 
@@ -15,19 +19,44 @@ def _is_ajax(request):
     return request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
 
-class ProductListView(View):
-    def get(self, request):
-        products = Product.objects.prefetch_related('images').order_by('-created_at')
-        paginator = Paginator(products, 8)
-        product_page = paginator.get_page(request.GET.get('page'))
-        return render(request, 'product/product_list.html', {
-            'product_page': product_page,
-            'product_page_range': get_compact_page_range(product_page),
-            'product_count': paginator.count,
+
+class ProductListView(FilterView):
+    model = Product
+    template_name = "product/product_list.html"
+    filterset_class = ProductFilter
+    paginate_by = 8
+
+    
+    def get_queryset(self):
+        queryset = (
+            Product.objects
+            .prefetch_related("images")
+            .order_by("-created_at")
+        )
+
+        search = self.request.GET.get("search")
+
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search) |
+                Q(description__icontains=search) |
+                Q(user__username__icontains=search)
+            )
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        page = context["page_obj"]
+
+        context.update({
+            "product_page": page,
+            "product_page_range": get_compact_page_range(page),
+            "product_count": self.filterset.qs.count(),
         })
 
-
-
+        return context
 class ProductDetailView(View):
     def get(self, request, product_pk):
         product = get_object_or_404(

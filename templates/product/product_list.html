@@ -8,7 +8,71 @@
         <div class="page-hero__text">
             <p class="eyebrow">Catalog</p>
             <h1 class="page-title">Products</h1>
-            <p class="page-lead">Browse available products and view details for each item.</p>
+            <div class="page-lead">
+              <form method="get" class="search-filter-form" role="search" aria-label="Search and filter products">
+                <div class="search-filter-form__main">
+                  <label class="search-filter-form__field search-filter-form__field--search">
+                    <span class="visually-hidden">Search products</span>
+                    <input
+                      type="text"
+                      name="search"
+                      placeholder="Search products..."
+                      value="{{ request.GET.search|default:'' }}"
+                    >
+                  </label>
+
+                  <details class="search-filter-form__dropdown">
+                    <summary class="btn btn--ghost btn--sm search-filter-form__summary">Filters</summary>
+                    <div class="search-filter-form__panel">
+                      <div class="search-filter-form__grid">
+                        <label class="search-filter-form__field">
+                          <span class="search-filter-form__label">Status</span>
+                          {{ filter.form.status }}
+                        </label>
+
+                        <label class="search-filter-form__field">
+                          <span class="search-filter-form__label">Currency</span>
+                          {{ filter.form.currency }}
+                        </label>
+
+                        <label class="search-filter-form__field">
+                          <span class="search-filter-form__label">Min price</span>
+                          <input
+                            type="number"
+                            name="min_price"
+                            placeholder="0"
+                            value="{{ request.GET.min_price|default:'' }}"
+                            min="0"
+                            step="0.01"
+                          >
+                        </label>
+
+                        <label class="search-filter-form__field">
+                          <span class="search-filter-form__label">Max price</span>
+                          <input
+                            type="number"
+                            name="max_price"
+                            placeholder="Any"
+                            value="{{ request.GET.max_price|default:'' }}"
+                            min="0"
+                            step="0.01"
+                          >
+                        </label>
+                      </div>
+
+                      <div class="search-filter-form__actions">
+                        <a href="{% url 'product_list' %}" class="btn btn--ghost btn--sm">Reset</a>
+                        <button type="submit" class="btn btn--primary btn--sm">Apply filters</button>
+                      </div>
+                    </div>
+                  </details>
+
+                  <button type="submit" class="btn btn--primary btn--sm">
+                    Search
+                  </button>
+                </div>
+              </form>
+            </div>
         </div>
         <a href="{% url 'product_create' %}" class="btn btn--icon btn--primary" aria-label="Add product" title="Add product">
             {% include "partials/icon.html" with name="plus" %}
@@ -54,8 +118,6 @@
   <div class="empty-state">
     <div class="empty-state__icon" aria-hidden="true">Catalog</div>
     <h2 class="empty-state__title">Catalog is empty</h2>
-    <p class="empty-state__text">Add your first product to get started.</p>
-    <a href="{% url 'product_create' %}" class="btn btn--primary">Create product</a>
   </div>
   {% endif %}
 </section>
